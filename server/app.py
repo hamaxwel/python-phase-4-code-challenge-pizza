@@ -44,10 +44,6 @@ def create_restaurant_pizza():
     restaurant_id = data.get('restaurant_id')
     price = data.get('price')
 
-@app.errorhandler(ValueError)
-def handle_value_error(e):
-    return jsonify({"errors": [str(e)]}), 400
-
     # Validate input
     if not pizza_id or not restaurant_id:
         return jsonify({"errors": ["pizza_id and restaurant_id are required"]}), 400
@@ -57,16 +53,23 @@ def handle_value_error(e):
         return jsonify({"errors": ["price must be between 1 and 30"]}), 400
 
     # Create new RestaurantPizza
-    new_restaurant_pizza = RestaurantPizza(
-        pizza_id=pizza_id, restaurant_id=restaurant_id, price=price
-    )
-    db.session.add(new_restaurant_pizza)
-    db.session.commit()
+    try:
+        new_restaurant_pizza = RestaurantPizza(
+            pizza_id=pizza_id, restaurant_id=restaurant_id, price=price
+        )
+        db.session.add(new_restaurant_pizza)
+        db.session.commit()
 
-    # Return RestaurantPizza with related Pizza data
-    response_data = new_restaurant_pizza.to_dict()
-    response_data['pizza'] = db.session.get(Pizza, pizza_id).to_dict()
-    return jsonify(response_data), 201
+        # Return RestaurantPizza with related Pizza data
+        response_data = new_restaurant_pizza.to_dict()
+        return jsonify(response_data), 201
+    except ValueError as e:
+        return jsonify({"errors": [str(e)]}), 400
+
+
+@app.errorhandler(ValueError)
+def handle_value_error(e):
+    return jsonify({"errors": [str(e)]}), 400
 
 
 if __name__ == '__main__':

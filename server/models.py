@@ -9,15 +9,17 @@ class Restaurant(db.Model):
     address = db.Column(db.String, nullable=False)
     pizzas = db.relationship('Pizza', secondary='restaurant_pizzas', back_populates='restaurants')
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_pizzas=False):
+        restaurant_dict = {
             "id": self.id,
             "name": self.name,
-            "address": self.address,
-            "restaurant_pizzas": [
+            "address": self.address
+        }
+        if include_pizzas:
+            restaurant_dict["restaurant_pizzas"] = [
                 restaurant_pizza.to_dict() for restaurant_pizza in self.pizzas
             ]
-        }
+        return restaurant_dict
 
 
 class Pizza(db.Model):
