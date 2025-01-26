@@ -45,7 +45,7 @@ def create_restaurant_pizza():
     if not db.session.get(Pizza, pizza_id) or not db.session.get(Restaurant, restaurant_id):
         return jsonify({"errors": ["Invalid pizza_id or restaurant_id"]}), 404
     if price is None or price < 1 or price > 30:
-        return jsonify({"errors": ["price must be between 1 and 30"]}), 400
+        return jsonify({"errors": ["validation errors"]}), 400
 
     # Create new RestaurantPizza
     new_restaurant_pizza = RestaurantPizza(
