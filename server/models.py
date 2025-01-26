@@ -55,6 +55,10 @@ class RestaurantPizza(db.Model):
             raise ValueError("Price must be between 1 and 30")
         self._price = value
 
+    # Define relationships to allow access to pizza and restaurant data
+    restaurant = db.relationship('Restaurant', backref='restaurant_pizzas')
+    pizza = db.relationship('Pizza', backref='restaurant_pizzas')
+
     def to_dict(self):
         return {
             "id": self.id,
